@@ -15,7 +15,7 @@ private UserEntryRepository userEntryRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userEntryRepository.findByUserName(username);
-        if (username != null){
+        if (user != null){
             UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                     .username(user.getUserName())
                     .password(user.getPassword())

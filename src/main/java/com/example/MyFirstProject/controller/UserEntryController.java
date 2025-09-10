@@ -1,11 +1,8 @@
 package com.example.MyFirstProject.controller;
 
 import com.example.MyFirstProject.Repository.UserEntryRepository;
-import com.example.MyFirstProject.entity.JournalEntry;
 import com.example.MyFirstProject.entity.User;
-import com.example.MyFirstProject.service.JournalEntryService;
 import com.example.MyFirstProject.service.UserEntryService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +10,30 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.Authenticator;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserEntryController {
     @Autowired
     private UserEntryService userEntryService;
     @Autowired
     private UserEntryRepository userEntryRepository;
 
+    @GetMapping("/{userName}")
+    public ResponseEntity<User> getUser(@PathVariable String userName) {
+        User user = userEntryService.findByUserName(userName);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody User user) {
+        if (userEntryService.findByUserName(user.getUserName()) != null) {
+            return new ResponseEntity<>("❌ User already exists!", HttpStatus.BAD_REQUEST);
+        }
+        userEntryService.saveNewEntry(user); // will hash password + set role
+        return new ResponseEntity<>("✅ User registered successfully!", HttpStatus.CREATED);
+    }
 
 
 
@@ -37,7 +45,7 @@ public class UserEntryController {
 
             userInDb.setUserName(user.getUserName());
             userInDb.setPassword(user.getPassword());
-            userEntryService.saveEntry(userInDb);
+            userEntryService.saveNewEntry(userInDb);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
