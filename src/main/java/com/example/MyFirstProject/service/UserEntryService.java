@@ -15,14 +15,21 @@ import java.util.Optional;
 @Service
 public class UserEntryService {
     @Autowired
-private UserEntryRepository userEntryRepository;
+    private UserEntryRepository userEntryRepository;
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    public void saveNewEntry(User user){
+
+    public void saveNewEntry(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Arrays.asList("USER"));
         userEntryRepository.save(user);
     }
-    public void saveEntry(User user){
+    public void saveAdmin(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Arrays.asList("USER","ADMIN"));
+        userEntryRepository.save(user);
+    }
+
+    public void saveEntry(User user) {
         userEntryRepository.save(user);
     }
 
@@ -30,13 +37,16 @@ private UserEntryRepository userEntryRepository;
     public List<User> getAll() {
         return userEntryRepository.findAll();
     }
-    public Optional<User> findById(ObjectId id){
+
+    public Optional<User> findById(ObjectId id) {
         return userEntryRepository.findById(id);
     }
-    public void deleteById(ObjectId id){
+
+    public void deleteById(ObjectId id) {
         userEntryRepository.deleteById(id);
     }
-    public User findByUserName(String userName){
+
+    public User findByUserName(String userName) {
         return userEntryRepository.findByUserName(userName);
     }
 }
