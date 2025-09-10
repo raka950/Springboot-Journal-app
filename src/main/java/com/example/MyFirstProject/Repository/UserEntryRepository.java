@@ -2,6 +2,7 @@ package com.example.MyFirstProject.Repository;
 
 import com.example.MyFirstProject.entity.JournalEntry;
 import com.example.MyFirstProject.entity.User;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
