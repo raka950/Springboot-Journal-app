@@ -3,6 +3,8 @@ package com.example.MyFirstProject.service;
 import com.example.MyFirstProject.Repository.UserEntryRepository;
 import com.example.MyFirstProject.entity.User;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,11 +19,19 @@ public class UserEntryService {
     @Autowired
     private UserEntryRepository userEntryRepository;
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private static final Logger logger = LoggerFactory.getLogger(UserEntryService.class);
 
     public void saveNewEntry(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Arrays.asList("USER"));
-        userEntryRepository.save(user);
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRole(Arrays.asList("USER"));
+            userEntryRepository.save(user);
+            logger.info("✅ User saved successfully: {}", user.getUserName());
+        }
+        catch (Exception e){
+            logger.error("❌ Error occurred for user: {}", user.getUserName(), e);
+        }
+
     }
     public void saveAdmin(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
