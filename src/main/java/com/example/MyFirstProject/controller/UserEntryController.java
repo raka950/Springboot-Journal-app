@@ -56,7 +56,12 @@ public class UserEntryController {
         userEntryRepository.deleteByUserName(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @GetMapping
+    public ResponseEntity<?> greeting() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        return new ResponseEntity<>("hello " + authentication.getName(),HttpStatus.OK);
+    }
 
 
 
