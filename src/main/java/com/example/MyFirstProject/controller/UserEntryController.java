@@ -1,8 +1,10 @@
 package com.example.MyFirstProject.controller;
 
 import com.example.MyFirstProject.Repository.UserEntryRepository;
+import com.example.MyFirstProject.api.response.WeatherResponse;
 import com.example.MyFirstProject.entity.User;
 import com.example.MyFirstProject.service.UserEntryService;
+import com.example.MyFirstProject.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ public class UserEntryController {
     private UserEntryService userEntryService;
     @Autowired
     private UserEntryRepository userEntryRepository;
+    @Autowired
+    private WeatherService weatherService;
 
     @GetMapping("/{userName}")
     public ResponseEntity<User> getUser(@PathVariable String userName) {
@@ -59,8 +63,13 @@ public class UserEntryController {
     @GetMapping
     public ResponseEntity<?> greeting() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        WeatherResponse weatherResponse = weatherService.getWeather("patna");
+        String greeting = "";
+        if (weatherResponse != null) {
+            greeting = "The weather in Patna is " + weatherResponse.getCurrent().getFeelslike();
+        }
 
-        return new ResponseEntity<>("hello " + authentication.getName(),HttpStatus.OK);
+        return new ResponseEntity<>("hello " + authentication.getName()+greeting ,HttpStatus.OK);
     }
 
 

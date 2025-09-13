@@ -1,7 +1,6 @@
 package com.example.MyFirstProject.service;
 
 import com.example.MyFirstProject.api.response.WeatherResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +16,9 @@ public class WeatherService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String getWeather(String city) {
+    public WeatherResponse getWeather(String city) {
         String finalAPI = API_URL.replace("{city}", city);
         ResponseEntity<WeatherResponse> response = restTemplate.exchange(finalAPI, HttpMethod.GET, null, WeatherResponse.class);
-        WeatherResponse body = response.getBody();
-        return body.toString();
+        return response.getBody();
     }
 }
