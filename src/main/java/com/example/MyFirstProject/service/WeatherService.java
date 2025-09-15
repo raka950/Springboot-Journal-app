@@ -17,12 +17,49 @@ public class WeatherService {
 
     @Autowired
     private RestTemplate restTemplate;
+
     @Autowired
     private AppCache appCache;
 
-    public WeatherResponse getWeather(String city) {
-        String url = appCache.APP_CACHE.get(AppCache.keys.weather_api.toString()) + "?access_key=" + apiKey + "&query=" + city;
-        ResponseEntity<WeatherResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, WeatherResponse.class);
-        return response.getBody();
+    public WeatherResponse getWeather(String location) {
+        try {
+            if (location == null || location.isEmpty()) {
+                location = "Patna";
+            }
+
+            WeatherResponse cached = appCache.getWeather(location);
+            if (cached != null) return cached;
+
+            String urlTemplate = appCache.getConfig("weather_api");
+            if (urlTemplate == null || urlTemplate.isEmpty()) {
+                System.err.println("Weather API URL template not found!");
+                return null;
+            }
+
+            String url = urlTemplate.replace("<apiKey>", apiKey.trim())
+                    .replace("<city>", location);
+
+            System.out.println("Weather API URL: " + url);
+
+            ResponseEntity<WeatherResponse> responseEntity =
+                    restTemplate.exchange(url, HttpMethod.GET, null, WeatherResponse.class);
+
+            WeatherResponse response = responseEntity.getBody();
+
+            if (response != null && response.getCurrent() != null) {
+                System.out.println("Feels like: " + response.getCurrent().getFeelslike());
+            }
+
+            appCache.putWeather(location, response);
+            return response;
+
+        } catch (Exception e) {
+            System.err.println("Error fetching weather: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public WeatherResponse getPatnaWeather() {
+        return getWeather("Patna");
     }
 }
