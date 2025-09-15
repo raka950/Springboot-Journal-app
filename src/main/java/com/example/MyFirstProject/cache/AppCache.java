@@ -1,14 +1,15 @@
-package com.example.MyFirstProject.cache;
 
-import com.example.MyFirstProject.Repository.ConfigJournalAppRepository;
-import com.example.MyFirstProject.entity.ConfigJournalAppEntry;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+        package com.example.MyFirstProject.cache;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+        import com.example.MyFirstProject.Repository.ConfigJournalAppRepository;
+        import com.example.MyFirstProject.entity.ConfigJournalAppEntry;
+        import jakarta.annotation.PostConstruct;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Component;
+
+        import java.util.HashMap;
+        import java.util.List;
+        import java.util.Map;
 
 @Component
 public class AppCache {
