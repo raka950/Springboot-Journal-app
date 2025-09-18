@@ -22,21 +22,34 @@ public class WeatherService {
 
     @Autowired
     private AppCache appCache;
+
     @Autowired
     private RedisService redisService;
 
+    private static final long REDIS_TTL_SECONDS = 300L; // 5 minutes
+
     public WeatherResponse getWeather(String location) {
+        if (location == null || location.isEmpty()) {
+            location = "Patna";
+        }
+        location = location.trim().toLowerCase();
+
         try {
+            // 1️⃣ Try Redis cache first
             WeatherResponse weatherResponse = redisService.get("weather:" + location, WeatherResponse.class);
-            if (weatherResponse != null) return weatherResponse;
-            else {
-            if (location == null || location.isEmpty() ) {
-                location = "Patna";
+            if (weatherResponse != null) {
+                System.out.println("✅ Weather fetched from Redis for " + location);
+                return weatherResponse;
             }
 
+            // 2️⃣ Try in-memory cache
             WeatherResponse cached = appCache.getWeather(location);
-            if (cached != null) return cached;
+            if (cached != null) {
+                System.out.println("✅ Weather fetched from AppCache for " + location);
+                return cached;
+            }
 
+            // 3️⃣ Fetch from API
             String urlTemplate = appCache.getConfig("weather_api");
             if (urlTemplate == null || urlTemplate.isEmpty()) {
                 System.err.println("Weather API URL template not found!");
@@ -52,18 +65,19 @@ public class WeatherService {
                     restTemplate.exchange(url, HttpMethod.GET, null, WeatherResponse.class);
 
             WeatherResponse response = responseEntity.getBody();
-            if (response == null) {
-                redisService.set("weather:" + location, response,300l, TimeUnit.SECONDS);
+
+            if (response != null) {
+                // 4️⃣ Cache in Redis
+                redisService.set("weather:" + location, response, REDIS_TTL_SECONDS, TimeUnit.SECONDS);
+
+                // 5️⃣ Cache in AppCache
+                appCache.putWeather(location, response);
+
+                System.out.println("✅ Weather cached for " + location);
             }
 
-            if (response != null && response.getCurrent() != null) {
-                System.out.println("Feels like: " + response.getCurrent().getFeelslike());
-            }
-
-            appCache.putWeather(location, response);
             return response;
 
-        }
         } catch (Exception e) {
             System.err.println("Error fetching weather: " + e.getMessage());
             return null;
@@ -73,5 +87,4 @@ public class WeatherService {
     public WeatherResponse getPatnaWeather() {
         return getWeather("Patna");
     }
-        }
-
+}
