@@ -44,8 +44,7 @@ JournalApp is a modern journaling platform built with Spring Boot, integrating m
 ### Clone Repository
 
 ```bash
-git clone https://github.com/chotabheeeeem/journalApp.git
-cd journalApp
+https://github.com/raka950/Springboot-Journal-app.git
 ```
 
 ### Build & Run
