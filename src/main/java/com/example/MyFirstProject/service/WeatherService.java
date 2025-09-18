@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class WeatherService {
 
@@ -20,10 +22,15 @@ public class WeatherService {
 
     @Autowired
     private AppCache appCache;
+    @Autowired
+    private RedisService redisService;
 
     public WeatherResponse getWeather(String location) {
         try {
-            if (location == null || location.isEmpty()) {
+            WeatherResponse weatherResponse = redisService.get("weather:" + location, WeatherResponse.class);
+            if (weatherResponse != null) return weatherResponse;
+            else {
+            if (location == null || location.isEmpty() ) {
                 location = "Patna";
             }
 
@@ -45,6 +52,9 @@ public class WeatherService {
                     restTemplate.exchange(url, HttpMethod.GET, null, WeatherResponse.class);
 
             WeatherResponse response = responseEntity.getBody();
+            if (response == null) {
+                redisService.set("weather:" + location, response,300l, TimeUnit.SECONDS);
+            }
 
             if (response != null && response.getCurrent() != null) {
                 System.out.println("Feels like: " + response.getCurrent().getFeelslike());
@@ -53,6 +63,7 @@ public class WeatherService {
             appCache.putWeather(location, response);
             return response;
 
+        }
         } catch (Exception e) {
             System.err.println("Error fetching weather: " + e.getMessage());
             return null;
@@ -62,4 +73,5 @@ public class WeatherService {
     public WeatherResponse getPatnaWeather() {
         return getWeather("Patna");
     }
-}
+        }
+

@@ -2,11 +2,12 @@ package com.example.MyFirstProject.service;
 
 import com.example.MyFirstProject.Repository.UserEntryRepository;
 import com.example.MyFirstProject.entity.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,4 +26,6 @@ private UserEntryRepository userEntryRepository;
         }
         throw new UsernameNotFoundException("User not found with username: "+ username);
     }
+
+
 }
