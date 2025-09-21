@@ -1,109 +1,132 @@
-# 📓 JournalApp
+# JournalApp – RESTful Journal Management System
 
-A **modern journaling API** built with **Spring Boot 3, Spring Security 6, and MongoDB**.  
-JournalApp makes it easy for users to **create, manage, and secure personal journal entries**—think of it as your private diary backend 📝.
-
----
-
-## ✨ Features
-
-- 🔐 **User Authentication & Security**
-    - Register & login with secure password hashing (BCrypt).
-    - Role-based access with Spring Security.
-
-- 🗒 **Journal Management**
-    - Create, read, update, and delete journal entries.
-    - Retrieve all entries for a specific user.
-
-- 💾 **Database Integration**
-    - Powered by MongoDB (supports both local & Atlas).
-    - Auto-index creation for efficient queries.
-
-- ⚡ **Developer Friendly**
-    - RESTful API ready for frontend or mobile integration.
-    - Works smoothly with Postman / cURL for testing.
+![Java](https://img.shields.io/badge/Java-17-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
+![Docker](https://img.shields.io/badge/Docker-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-4.4-green)
+![Redis](https://img.shields.io/badge/Redis-6.2-orange)
+![Kafka](https://img.shields.io/badge/Kafka-3.4-purple)
 
 ---
 
-## 🛠 Tech Stack
+JournalApp is a modern journaling platform built with Spring Boot, integrating multiple technologies to provide a secure, scalable, and efficient journaling experience.
 
-- **Backend:** Spring Boot 3.x, Spring Security 6.x
-- **Database:** MongoDB / MongoDB Atlas
-- **Language:** Java 17+
-- **Build Tool:** Maven
-- **Other:** Lombok, BCryptPasswordEncoder
+## 🎯 Features
 
----
+* 🔒 **Secure REST APIs** with JWT and Basic Auth
+* 📝 **CRUD Operations** for journal entries (MongoDB & JPA)
+* ⚡ **Redis Caching** for high performance
+* 📬 **Kafka Messaging** for event-driven architecture
+* 📊 **Monitoring & Logging** with Spring Boot Actuator
+* 🧪 **Unit & Integration Tests** for maintainability
+* 🐳 **Dockerized** for easy deployment
+
+## 🛠️ Tech Stack
+
+| Technology  | Description                   |
+| ----------- | ----------------------------- |
+| Java 17     | Backend language              |
+| Spring Boot | REST API framework            |
+| MongoDB     | NoSQL database                |
+| Redis       | In-memory caching             |
+| Kafka       | Event streaming               |
+| Docker      | Containerization              |
+| Maven       | Build & dependency management |
 
 ## 🚀 Getting Started
 
-### 1️⃣ Clone the Repository
+### Prerequisites
+
+* Java 17+
+* Maven
+* Docker (optional)
+
+### Clone Repository
+
 ```bash
-git clone https://github.com/chotabheeeeem/journalApp.git
-cd journalApp
+https://github.com/raka950/Springboot-Journal-app.git
 ```
 
-### 2️⃣ Configure MongoDB Connection
-Edit `src/main/resources/application.properties` depending on your environment:
+### Build & Run
 
-#### 👉 Local MongoDB
-```properties
-spring.data.mongodb.uri=mongodb://localhost:27017/journaldb
-server.port=8081
-```
-
-#### 👉 MongoDB Atlas
-```properties
-spring.data.mongodb.uri=mongodb+srv://<username>:<password>@cluster0.mongodb.net/journaldb?retryWrites=true&w=majority&ssl=true
-server.port=8081
-```
-
-### 3️⃣ Run the App
 ```bash
+mvn clean install
 mvn spring-boot:run
 ```
 
+The application will run at [http://localhost:8080](http://localhost:8080)
+
+### Docker Setup (Optional)
+
+```bash
+docker-compose up --build
+```
+
+This will start the app with MongoDB and Redis containers.
+
+## 🔐 Authentication
+
+* Obtain JWT token via login endpoint
+* Use token in `Authorization: Bearer <token>` header for protected endpoints
+
+## 📬 API Testing
+
+Use Postman or any API client. Import a collection (optional) and include JWT in headers for protected routes.
+
+## 🧪 Running Tests
+
+```bash
+mvn test
+```
+
+## 🌐 Example Requests
+
+* **Default Weather (Patna)**: `GET /user`
+* **Custom Weather (Delhi)**: `GET /user?city=Delhi`
+
+## 📂 Project Structure
+
+<details>
+<summary>Click to expand</summary>
+
+```
+src/
+├── main/
+│   ├── java/com/example/journalapp/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── repository/
+│   │   ├── model/
+│   │   ├── config/
+│   │   ├── exception/
+│   │   ├── security/
+│   │   ├── util/
+│   │   ├── cache/
+│   │   └── messaging/
+│   └── resources/
+│       ├── application.yml
+│       ├── logback-spring.xml
+│       └── ...
+└── test/
+    └── java/com/example/journalapp/
+```
+
+</details>
+
+## 📄 License
+
+This project is licensed under the **GPL-3.0 License**.
+
+## 📌 Notes
+
+* Real-time weather API integration for user greeting
+* Kafka messaging for asynchronous operations
+* Redis caching for frequently accessed data
+
+## 🎬 Demo
+
+![Demo GIF](https://media.giphy.com/media/your-demo-gif.gif)
+
 ---
 
-## 📡 API Endpoints
-
-| Method   | Endpoint                          | Description                  | Auth |
-|----------|-----------------------------------|------------------------------|------|
-| `POST`   | `/users`                          | Register a new user          | ❌ No |
-| `GET`    | `/journal/{userName}`             | Get all entries for a user   | ✅ Yes |
-| `POST`   | `/journal/{userName}`             | Create a new journal entry   | ✅ Yes |
-| `GET`    | `/journal/id/{id}`                | Get a journal entry by ID    | ✅ Yes |
-| `PUT`    | `/journal/id/{userName}/{id}`     | Update a journal entry by ID | ✅ Yes |
-| `DELETE` | `/journal/id/{userName}/{id}`     | Delete a journal entry by ID | ✅ Yes |
-
----
-
-## 🔒 Security Notes
-- Passwords are stored **only in hashed form** using BCrypt.
-- API uses **HTTP Basic Auth** and form login.
-- CSRF is disabled for easier API testing in Postman.
-
----
-
-## 🌱 Future Improvements
-- ✅ JWT-based authentication
-- ✅ Role-based admin panel
-- ✅ Docker & Kubernetes deployment
-- ✅ Frontend integration (React/Angular)
-
----
-
-## 🤝 Contributing
-Contributions, issues, and feature requests are welcome!  
-Feel free to fork this repo and open a PR.
-
----
-
-## 📜 License
-This project is licensed under the **MIT License**.  
-See the [LICENSE](LICENSE) file for details.
-
----
-
-> _“Your mind is for having ideas, not holding them.”_ – David Allen  
-> JournalApp helps you free your mind by keeping your thoughts safe 🖊️  
+*Made with ❤️ using Spring Boot, Kafka, Redis & MongoDB*
