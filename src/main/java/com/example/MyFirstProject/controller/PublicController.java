@@ -34,9 +34,7 @@ public class PublicController {
     public void login(@RequestBody User user){
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
-            UserDetails userDetails = userEntryService.loadUserByUsername(user.getUserName());
-            String jwt = jwtUtil.generateToken(userDetails.getUsername());
-            return new ResponseEntity<>(jwt, HttpStatus.OK);
+
         }catch (Exception e){
             throw new RuntimeException("❌ Login failed!");
         }
